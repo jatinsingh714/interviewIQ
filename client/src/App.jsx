@@ -11,7 +11,7 @@ import InterviewReport from './pages/InterviewReport'
 import Pricing from './pages/pricing'
 
 
-export const ServerUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:8000"
+export const ServerUrl = import.meta.env.VITE_SERVER_URL || "https://interviewiq-4-obp3.onrender.com"
 function App() {
   const dispatch = useDispatch()
   useEffect(()=>{
