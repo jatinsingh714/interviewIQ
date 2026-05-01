@@ -5,8 +5,16 @@ const pdfjsLib = pkg;
 import { askAi } from "../services/openRouter.service.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
-import { error } from "console";
 
+const extractJsonPayload = (text) => {
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start === -1 || end === -1 || end <= start) {
+        throw new Error("AI response did not contain valid JSON.");
+    }
+    const jsonText = text.slice(start, end + 1);
+    return JSON.parse(jsonText);
+};
 
 export const analyzeResume = async (req, res) => {
     try {
@@ -53,16 +61,6 @@ export const analyzeResume = async (req, res) => {
         ];
 
         const aiResponse = await askAi(messages)
-
-        const extractJsonPayload = (text) => {
-            const start = text.indexOf("{");
-            const end = text.lastIndexOf("}");
-            if (start === -1 || end === -1 || end <= start) {
-                throw new Error("AI response did not contain valid JSON.");
-            }
-            const jsonText = text.slice(start, end + 1);
-            return JSON.parse(jsonText);
-        };
 
         const parsed = extractJsonPayload(aiResponse);
 
@@ -154,13 +152,13 @@ export const generateQuestion = async (req, res) => {
         - Do NOT repeat the same question or ask the same thing twice.
         
         Difficulty progression:
-        Question 1 → easy  
-        Question 2 → easy  
-        Question 3 → medium  
-        Question 4 → medium  
-        Question 5 → hard  
+        Question 1 -> easy  
+        Question 2 -> easy  
+        Question 3 -> medium  
+        Question 4 -> medium  
+        Question 5 -> hard  
         
-        Make questions based on the candidate’s role, experience,interviewMode, projects, skills, and resume details.
+        Make questions based on the candidate's role, experience, interviewMode, projects, skills, and resume details.
         `
             }
             ,
@@ -256,7 +254,14 @@ export const submitAnswer = async (req, res) => {
         const {interviewId, questionIndex, answer, timeTaken} = req.body
 
         const interview = await Interview.findById(interviewId)
+        if (!interview) {
+            return res.status(404).json({ message: "Interview not found" });
+        }
+
         const question = interview.questions[questionIndex]
+        if (!question) {
+            return res.status(400).json({ message: "Invalid question index" });
+        }
 
         // If no answer
         if (!answer) {
@@ -294,9 +299,9 @@ export const submitAnswer = async (req, res) => {
   
   Score the answer in these areas (0 to 10):
   
-  1. Confidence – Does the answer sound clear, confident, and well-presented?
-  2. Communication – Is the language simple, clear, and easy to understand?
-  3. Correctness – Is the answer accurate, relevant, and complete?
+  1. Confidence - Does the answer sound clear, confident, and well-presented?
+  2. Communication - Is the language simple, clear, and easy to understand?
+  3. Correctness - Is the answer accurate, relevant, and complete?
   
   Rules:
   - Be realistic and unbiased.
@@ -339,7 +344,7 @@ export const submitAnswer = async (req, res) => {
         ];
 
         const aiResponse = await askAi(messages)
-        let parsed = JSON.parse(aiResponse);
+        let parsed = extractJsonPayload(aiResponse);
 
         question.answer = answer;
         question.confidence = parsed.confidence;
@@ -373,7 +378,7 @@ export const finishInterview = async (req,res) =>{
 
         interview.questions.forEach((q) => {
             totalScore += q.score || 0;
-            totalConfidence += q.communication || 0;
+            totalConfidence += q.confidence || 0;
             totalCommunication += q.communication || 0;
             totalCorrectness += q.correctness || 0;
         });

@@ -5,16 +5,33 @@ import { motion as Motion } from "motion/react"
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../utils/firebase';
-import  Axios  from 'axios';
-import { ServerUrl } from '../App';
+import { ServerUrl } from '../utils/serverUrl';
 import axios from 'axios';
 import { setUserData } from '../../redux/userSlice';
 import {  useDispatch } from 'react-redux';
+import { useState } from 'react';
 
 function Auth({isModel = false}) {
     const dispatch = useDispatch()
+    const [errorMessage, setErrorMessage] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+
+    const getAuthErrorMessage = (error) => {
+        if (error?.code === "auth/unauthorized-domain") {
+            return "This domain is not allowed in Firebase Authentication. Add it in Firebase Console > Authentication > Settings > Authorized domains."
+        }
+
+        if (error?.code === "auth/popup-closed-by-user") {
+            return "Google sign-in was closed before it finished. Please try again."
+        }
+
+        return error?.response?.data?.message || error?.message || "Google sign-in failed. Please try again."
+    }
+
     const handleGoogleAuth = async () => {
         try {
+            setIsLoading(true)
+            setErrorMessage("")
             const response = await signInWithPopup(auth,provider)
             let User = response.user
             let name = User.displayName
@@ -23,7 +40,10 @@ function Auth({isModel = false}) {
             dispatch(setUserData(result.data))
         } catch (error) {
             console.log(error)
+            setErrorMessage(getAuthErrorMessage(error))
             dispatch(setUserData(null))
+        } finally {
+            setIsLoading(false)
         }
     }
   return (
@@ -50,12 +70,18 @@ function Auth({isModel = false}) {
         </p>
         <Motion.button 
         onClick={handleGoogleAuth}
+        disabled={isLoading}
         whileHover={{opacity:0.9, scale:1.03}}
         whileTap={{opacity:1, scale:0.98}}
-        className='w-full flex items-center justify-center gap-3 py-3 bg-black text-white rounded-full shadow-md'>
+        className='w-full flex items-center justify-center gap-3 py-3 bg-black text-white rounded-full shadow-md disabled:cursor-not-allowed disabled:opacity-70'>
             <FcGoogle size={20}/>
-            Continue with Google
+            {isLoading ? "Signing in..." : "Continue with Google"}
         </Motion.button>
+        {errorMessage && (
+            <p className='mt-4 text-center text-sm text-red-500'>
+                {errorMessage}
+            </p>
+        )}
         </Motion.div>   
     </div>
   )

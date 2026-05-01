@@ -9,9 +9,9 @@ import InterviewPage from "./pages/InterviewPage"
 import InterviewHistory from './pages/interviewHistory'
 import InterviewReport from './pages/InterviewReport'
 import Pricing from './pages/pricing'
+import { ServerUrl } from './utils/serverUrl'
 
 
-export const ServerUrl = import.meta.env.VITE_SERVER_URL || "https://interviewiq-4-obp3.onrender.com"
 function App() {
   const dispatch = useDispatch()
   useEffect(()=>{

@@ -4,7 +4,7 @@ import femaleVideo from "../assets/videos/female-ai.mp4"
 import Timer from './Timer'
 import {FaMicrophone, FaMicrophoneSlash} from "react-icons/fa";
 import axios from "axios"
-import { ServerUrl } from '../App'
+import { ServerUrl } from '../utils/serverUrl'
 import { BsArrowRight } from 'react-icons/bs'
 
 

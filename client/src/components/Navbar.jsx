@@ -7,7 +7,7 @@ import {HiOutlineLogout} from "react-icons/hi";
 import {FaUserAstronaut} from "react-icons/fa";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ServerUrl } from '../App';
+import { ServerUrl } from '../utils/serverUrl';
 import axios from 'axios';
 import { setUserData } from '../../redux/userSlice';
 import AuthModel from './AuthModel';

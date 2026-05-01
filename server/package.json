@@ -22,9 +22,12 @@
     "mongoose": "^9.3.2",
     "multer": "^2.1.1",
     "node.js": "^0.0.1-security",
-    "pdfjs-dist": "^3.4.120",
+    "pdfjs-dist": "^5.7.284",
     "razorpay": "^2.9.6",
     "react-circular-progressbar": "^2.2.0"
   },
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
 }

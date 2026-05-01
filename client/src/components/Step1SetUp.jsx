@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion as Motion } from "motion/react"
 import { FaUserTie, FaBriefcase, FaFileUpload,FaMicrophoneAlt, FaChartLine } from 'react-icons/fa'
 import axios from "axios"
-import { ServerUrl } from '../App';
+import { ServerUrl } from '../utils/serverUrl';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../../redux/userSlice';
 
