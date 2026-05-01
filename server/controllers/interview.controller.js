@@ -1,5 +1,7 @@
 import fs from "fs"
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+//import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import pkg from 'pdfjs-dist/legacy/build/pdf.js';
+const pdfjsLib = pkg;
 import { askAi } from "../services/openRouter.service.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
